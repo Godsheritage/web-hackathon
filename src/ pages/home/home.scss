@@ -1,0 +1,18 @@
+.header{
+    height: 7vh;
+    background-color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.main-content{
+    height: 86vh;
+    .sider{
+        background-color: white;
+
+    }
+}
+.footer{
+    height: 7vh;
+    text-align: center;
+}
