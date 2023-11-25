@@ -19,8 +19,10 @@ import {
 } from "antd";
 import React, { useState, useEffect } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
+import HeaderComponent from "../../components/HeaderComponent";
+import FooterComponent from "../../components/FooterComponent";
 
-const { Header, Footer, Sider, Content } = Layout;
+const { Sider, Content } = Layout;
 const courseData = [
   "Computer Science",
   "Computer Science",
@@ -71,22 +73,18 @@ const items: MenuProps["items"] = [
 ];
 
 const Home = () => {
-
-
+  // SETUP THE WEB SOCKET CONNECTION TO THE BACKEND SERVER
   const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
     "http://localhost:1234/"
   );
+
   const [chatMessage, setChatMessage] = useState<string[]>([]);
-
-
-
   const [current, setCurrent] = useState("majors");
   const [thread, setThread] = useState("Select Thread");
   const [data, setData] = useState(courseData);
-
   const [message, setMessage] = useState("");
-  //   const [data, setData] = useState(courseData);
 
+  // CONSTANTLY QUERY THE BACKEND SERVER FOR NEW MESSAGES FROM OTHER USERS
   useEffect(() => {
     socket.on("serverMsg", (data) => {
       setChatMessage([...chatMessage, data.msg]);
@@ -94,12 +92,14 @@ const Home = () => {
     });
   }, [socket, chatMessage]);
 
+  // EMMITS THE SOCKET EVENT TO THE SERVER
   const handleSend = () => {
-    // setChat([...chat, message]);
     socket.emit("clientMsg", { msg: message });
     setMessage("");
   };
 
+
+  // HANDLES THE "MAJORS " SEARCH FEATURRE
   const handleSearch = (e) => {
     const searchParam = e.target.value.toLowerCase();
     const filteredData = data.filter((item) =>
@@ -116,28 +116,7 @@ const Home = () => {
   return (
     <Space direction="vertical" style={{ width: "100%" }} size={[0, 48]}>
       <Layout>
-        {/* //! Start Header Component  */}
-        <Header className="header">
-          {/* //TODO get a better logo*/}
-          <h1>Logo</h1>
-          <h1>{thread}</h1>
-          <div>
-            <Space.Compact size="large">
-              <Input
-                addonBefore={<SearchOutlined />}
-                placeholder="Search Chats, Messages"
-                size="large"
-                style={{ width: "20rem" }}
-                // bordered={true}
-              />
-            </Space.Compact>
-            <Button size={"large"} shape="round" style={{ marginLeft: "1rem" }}>
-              Join
-            </Button>
-          </div>
-        </Header>
-        {/* //! End Header Component  */}
-        {/* //! Main Body Component  */}
+        <HeaderComponent />
         <Layout hasSider className="main-content">
           {/* //! Start SideBar Component   */}
           <Sider className="sider" width={"25vw"}>
@@ -210,8 +189,7 @@ const Home = () => {
           </Content>
           {/* //! End Main Content Component   */}
         </Layout>
-        {/* //! Footer Component  */}
-        <Footer className="footer">Copywright Godsheritage &#169; 2023</Footer>
+        <FooterComponent />
       </Layout>
     </Space>
   );
