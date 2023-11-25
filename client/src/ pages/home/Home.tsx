@@ -17,10 +17,10 @@ import {
   Divider,
   Skeleton,
 } from "antd";
-import { useState } from "react";
-const { Header, Footer, Sider, Content } = Layout;
+import React, { useState, useEffect } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 
+const { Header, Footer, Sider, Content } = Layout;
 const courseData = [
   "Computer Science",
   "Computer Science",
@@ -53,7 +53,10 @@ const courseData = [
   "Computer Science",
   "Computer Science",
 ];
+import { Socket, io } from "socket.io-client";
+import { ServerToClientEvents, ClientToServerEvents } from "../../../../typing";
 
+// This function sets the menu items up
 const items: MenuProps["items"] = [
   {
     label: "Majors",
@@ -68,15 +71,32 @@ const items: MenuProps["items"] = [
 ];
 
 const Home = () => {
+
+
+  const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
+    "http://localhost:1234/"
+  );
+  const [chatMessage, setChatMessage] = useState<string[]>([]);
+
+
+
   const [current, setCurrent] = useState("majors");
   const [thread, setThread] = useState("Select Thread");
   const [data, setData] = useState(courseData);
-  const [chat, setChat] = useState([]);
+
   const [message, setMessage] = useState("");
   //   const [data, setData] = useState(courseData);
 
+  useEffect(() => {
+    socket.on("serverMsg", (data) => {
+      setChatMessage([...chatMessage, data.msg]);
+      console.log(chatMessage);
+    });
+  }, [socket, chatMessage]);
+
   const handleSend = () => {
-    setChat([...chat, message]);
+    // setChat([...chat, message]);
+    socket.emit("clientMsg", { msg: message });
     setMessage("");
   };
 
@@ -175,6 +195,11 @@ const Home = () => {
                 height: "100%",
               }}
             >
+              <div>
+                {chatMessage.map((msg, idx) => {
+                  return <p key={idx}>{msg}</p>;
+                })}
+              </div>
               <Input
                 addonAfter={<SendOutlined onClick={() => handleSend()} />}
                 placeholder="Send a message here"

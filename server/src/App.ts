@@ -1,9 +1,19 @@
-import express from "express";
+import express, { RequestHandler } from "express";
+import cors from "cors";
 
-const App = express();
+const app = express();
 
-App.get("/", (req, res) => {
-  res.send("This is home page.");
-});
+app.use(cors());
 
-export default App;
+const homeRouter: RequestHandler = (req, res) => {
+  return res.json({
+    msg: "hello, are you there?",
+    status: 200,
+  });
+};
+
+app.use("/", homeRouter);
+
+
+export default app;
+
