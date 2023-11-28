@@ -7,7 +7,7 @@ import HeaderComponent from "../../components/HeaderComponent";
 import FooterComponent from "../../components/FooterComponent";
 import ChatComponent from "../../components/chat/ChatComponent";
 import { ServerToClientEvents, ClientToServerEvents } from "../../../../typing";
-import {courseData} from "../../data/courses";
+import { courseData } from "../../data/courses";
 import { majorsData } from "../../data/majors";
 import {
   SearchOutlined,
@@ -53,12 +53,13 @@ const Home = () => {
   );
 
   const [message, setMessage] = useState("");
-  const [data, setData] = useState(courseData);
-  const [current, setCurrent] = useState("majors");
+  const [currentMenuItem, setCurrentMenuItem] = useState("majors");
+  const [data, setData] = useState<any>(courseData);
   const [showModal, setShowModal] = useState(false);
   const [thread, setThread] = useState("Select Thread");
   const [chatMessage, setChatMessage] = useState([]);
   const [user, setUser] = useState();
+
 
   // // Retrieve the JSON string from local storage using the key 'user'
   const userJSON = JSON.parse(localStorage.getItem("user"))
@@ -79,22 +80,42 @@ const Home = () => {
     setMessage("");
   };
 
-  // HANDLES THE "MAJORS " SEARCH FEATURRE
+  // HANDLES THE "MAJORS, AND COURSES SEARCH FEATURRE
   const handleSearch = (e) => {
     const searchParam = e.target.value.toLowerCase();
-    const filteredData = data.filter((item) =>
-      item.toLowerCase().includes(searchParam)
-    );
-    setData(searchParam ? filteredData : courseData);
+    if (currentMenuItem == "majors") {
+
+      const filteredData = data.filter((item) =>
+        item.major.toLowerCase().includes(searchParam)
+      );
+      setData(searchParam ? filteredData : majorsData);
+    }
+    else if (currentMenuItem == "courses") {
+      const filteredData = data.filter((item) =>
+        item.course_number.toLowerCase().includes(searchParam)
+      );
+      setData(searchParam ? filteredData : courseData);
+
+    }
+
   };
 
-  // HANDLES THE MENU CLICK FEAUTURE
+  // HANDLES THE SUB MENU CLICK FEAUTURE
   const onClick: MenuProps["onClick"] = (e) => {
     console.log("click ", e);
-    setCurrent(e.key);
+    setCurrentMenuItem(e.key);
+
+    // CHANGES THE DATA STATE BASED ON MAJORS, OR COURSE FILTER
+    if (e.key == "courses") {
+      setData(courseData)
+    }
+    else if (e.key == "majors") {
+      setData(majorsData)
+    }
+
   };
 
-  // CHECKS IF MY TEXT INPUT HAS @ai
+  // DISPLAYS THE AI MODAL WHWEN @ai IS DETECTED
   const handleChange = (e) => {
     const inputValue = e.target.value;
     setMessage(inputValue);
@@ -116,7 +137,7 @@ const Home = () => {
           <Sider className="sider" width={"25vw"}>
             <Menu
               onClick={onClick}
-              selectedKeys={[current]}
+              selectedKeys={[currentMenuItem]}
               mode="horizontal"
               items={items}
             />
@@ -148,7 +169,8 @@ const Home = () => {
                     onClick={(e: any) => setThread(e.target.innerText)}
                     style={{ cursor: "pointer" }}
                   >
-                    {item.course_number}
+                    {/* CONDITIONAL STATEMENT TO FILTER LIST BY MAJOR OR COURSES */}
+                    {currentMenuItem === "majors" ? item.major : `${item.course_number} (${item.course_name})`}
                   </List.Item>
                 )}
               />
@@ -176,7 +198,7 @@ const Home = () => {
                     <ChatComponent
                       key={idx}
                       text={msg.msg}
-                      className={msg.sender_id === userJSON.id? "sender": "receiver"}
+                      className={msg.sender_id === userJSON.id ? "sender" : "receiver"}
                     />
                   );
                 })}
