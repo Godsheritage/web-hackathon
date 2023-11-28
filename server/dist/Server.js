@@ -17,7 +17,13 @@ const io = new socket_io_1.Server(server, {
 const PORT = process.env.PORT || 1234;
 io.on("connection", (socket) => {
     socket.on("clientMsg", (data) => {
-        socket.broadcast.emit("serverMsg", data);
+        if ((data.room = "")) {
+            socket.broadcast.emit("serverMsg", data);
+        }
+        else {
+            socket.join(data.room);
+            io.to(data.room).emit("serverMsg", data);
+        }
     });
 });
 server.listen(PORT, () => {

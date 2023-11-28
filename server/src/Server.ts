@@ -1,8 +1,8 @@
 import app from "./App";
 import http from "http";
 import cors from "cors";
-import { ClientToServerEvents, ServerToClientEvents } from "../../typing";
 import { Server, Socket } from "socket.io";
+import { ClientToServerEvents, ServerToClientEvents } from "../../typing";
 
 const server = http.createServer(app);
 
@@ -20,7 +20,13 @@ io.on(
   "connection",
   (socket: Socket<ClientToServerEvents, ServerToClientEvents>) => {
     socket.on("clientMsg", (data) => {
-        socket.broadcast.emit("serverMsg", data)
+      if ((data.room = "")) {
+        socket.broadcast.emit("serverMsg", data);
+      }
+      else{
+        socket.join(data.room)
+        io.to(data.room).emit("serverMsg", data)
+      }
     });
   }
 );

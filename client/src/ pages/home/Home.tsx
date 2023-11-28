@@ -21,6 +21,7 @@ import React, { useState, useEffect } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import HeaderComponent from "../../components/HeaderComponent";
 import FooterComponent from "../../components/FooterComponent";
+import ModalComponent from "../../components/ModalComponent";
 
 const { Sider, Content } = Layout;
 const courseData = [
@@ -83,6 +84,7 @@ const Home = () => {
   const [thread, setThread] = useState("Select Thread");
   const [data, setData] = useState(courseData);
   const [message, setMessage] = useState("");
+  const [showModal, setShowModal] = useState(false);
 
   // CONSTANTLY QUERY THE BACKEND SERVER FOR NEW MESSAGES FROM OTHER USERS
   useEffect(() => {
@@ -98,7 +100,6 @@ const Home = () => {
     setMessage("");
   };
 
-
   // HANDLES THE "MAJORS " SEARCH FEATURRE
   const handleSearch = (e) => {
     const searchParam = e.target.value.toLowerCase();
@@ -113,6 +114,18 @@ const Home = () => {
     setCurrent(e.key);
   };
 
+  const handleChange = (e) => {
+    const inputValue = e.target.value;
+    setMessage(inputValue);
+
+    if (inputValue.includes("@ai ")) {
+      setShowModal(false);
+    } else if (inputValue.includes("@ai")) {
+      setShowModal(true);
+    } else {
+      setShowModal(false);
+    }
+  };
   return (
     <Space direction="vertical" style={{ width: "100%" }} size={[0, 48]}>
       <Layout>
@@ -182,9 +195,10 @@ const Home = () => {
               <Input
                 addonAfter={<SendOutlined onClick={() => handleSend()} />}
                 placeholder="Send a message here"
-                onChange={(e) => setMessage(e.target.value)}
+                onChange={(e) => handleChange(e)}
                 value={message}
               />
+              {showModal && <ModalComponent />}
             </Space.Compact>
           </Content>
           {/* //! End Main Content Component   */}
