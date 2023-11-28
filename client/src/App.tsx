@@ -1,9 +1,8 @@
 import "./App.css";
-import { useEffect, useState } from "react";
+import React from "react";
 import Home from "./ pages/home/Home";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import LogOn from "./ pages/LogOn";
-import io from "socket.io-client";
 
 const App = () => {
  

@@ -1,10 +1,21 @@
 import "./home.scss";
+import { Socket, io } from "socket.io-client";
+import React, { useState, useEffect } from "react";
+import ChatComponent from "../../components/ChatComponent";
+import ModalComponent from "../../components/ModalComponent";
+import InfiniteScroll from "react-infinite-scroll-component";
+import HeaderComponent from "../../components/HeaderComponent";
+import FooterComponent from "../../components/FooterComponent";
+import { ServerToClientEvents, ClientToServerEvents } from "../../../../typing";
+
+
 import {
   SearchOutlined,
   BookOutlined,
   GlobalOutlined,
   SendOutlined,
 } from "@ant-design/icons";
+
 import {
   Layout,
   Button,
@@ -17,13 +28,9 @@ import {
   Divider,
   Skeleton,
 } from "antd";
-import React, { useState, useEffect } from "react";
-import InfiniteScroll from "react-infinite-scroll-component";
-import HeaderComponent from "../../components/HeaderComponent";
-import FooterComponent from "../../components/FooterComponent";
-import ModalComponent from "../../components/ModalComponent";
 
 const { Sider, Content } = Layout;
+
 const courseData = [
   "Computer Science",
   "Computer Science",
@@ -56,10 +63,8 @@ const courseData = [
   "Computer Science",
   "Computer Science",
 ];
-import { Socket, io } from "socket.io-client";
-import { ServerToClientEvents, ClientToServerEvents } from "../../../../typing";
 
-// This function sets the menu items up
+// MENU ITEMS
 const items: MenuProps["items"] = [
   {
     label: "Majors",
@@ -79,18 +84,18 @@ const Home = () => {
     "http://localhost:1234/"
   );
 
-  const [chatMessage, setChatMessage] = useState<string[]>([]);
-  const [current, setCurrent] = useState("majors");
-  const [thread, setThread] = useState("Select Thread");
-  const [data, setData] = useState(courseData);
   const [message, setMessage] = useState("");
+  const [data, setData] = useState(courseData);
+  const [current, setCurrent] = useState("majors");
   const [showModal, setShowModal] = useState(false);
+  const [thread, setThread] = useState("Select Thread");
+  const [chatMessage, setChatMessage] = useState<string[]>([]);
 
   // CONSTANTLY QUERY THE BACKEND SERVER FOR NEW MESSAGES FROM OTHER USERS
   useEffect(() => {
     socket.on("serverMsg", (data) => {
+      console.log(data)
       setChatMessage([...chatMessage, data.msg]);
-      console.log(chatMessage);
     });
   }, [socket, chatMessage]);
 
@@ -109,11 +114,13 @@ const Home = () => {
     setData(searchParam ? filteredData : courseData);
   };
 
+  // HANDLES THE MENU CLICK FEAUTURE
   const onClick: MenuProps["onClick"] = (e) => {
     console.log("click ", e);
     setCurrent(e.key);
   };
 
+  // CHECKS IF MY TEXT INPUT HAS @ai 
   const handleChange = (e) => {
     const inputValue = e.target.value;
     setMessage(inputValue);
@@ -189,7 +196,7 @@ const Home = () => {
             >
               <div>
                 {chatMessage.map((msg, idx) => {
-                  return <p key={idx}>{msg}</p>;
+                  return <ChatComponent key={idx} text={msg} />;
                 })}
               </div>
               <Input

@@ -21,6 +21,7 @@ instrument(io, {
 
 const PORT = process.env.PORT || 1234;
 
+// SET THE SOCKET SERVER TO LISTEN TO EVENTS 
 io.on(
   "connection",
   (socket: Socket<ClientToServerEvents, ServerToClientEvents>) => {

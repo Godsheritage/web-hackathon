@@ -19,6 +19,7 @@ const io = new socket_io_1.Server(server, {
     auth: false,
 });
 const PORT = process.env.PORT || 1234;
+// SET THE SOCKET SERVER TO LISTEN TO EVENTS 
 io.on("connection", (socket) => {
     socket.on("clientMsg", (data) => {
         if ((data.room = "")) {
