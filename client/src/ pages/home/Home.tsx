@@ -7,7 +7,8 @@ import HeaderComponent from "../../components/HeaderComponent";
 import FooterComponent from "../../components/FooterComponent";
 import ChatComponent from "../../components/chat/ChatComponent";
 import { ServerToClientEvents, ClientToServerEvents } from "../../../../typing";
-
+import {courseData} from "../../data/courses";
+import { majorsData } from "../../data/majors";
 import {
   SearchOutlined,
   BookOutlined,
@@ -30,38 +31,6 @@ import {
 
 const { Sider, Content } = Layout;
 
-const courseData = [
-  "Computer Science",
-  "Computer Science",
-  "Computer Science",
-  "Computer Science",
-  "Computer Science",
-  "Computer Science",
-  "Computer Science",
-  "Computer Science",
-  "Computer Science",
-  "Computer Science",
-  "Computer Science",
-  "Computer Science",
-  "Computer Science",
-  "Computer Science",
-  "Computer Science",
-  "Computer Science",
-  "Computer Science",
-  "Computer Science",
-  "Computer Science",
-  "Computer Science",
-  "Computer Science",
-  "Computer Science",
-  "Computer Science",
-  "Computer Science",
-  "Computer Science",
-  "Computer Science",
-  "Computer Science",
-  "Computer Science",
-  "Computer Science",
-  "Computer Science",
-];
 
 // MENU ITEMS
 const items: MenuProps["items"] = [
@@ -99,10 +68,10 @@ const Home = () => {
   // CONSTANTLY QUERY THE BACKEND SERVER FOR NEW MESSAGES FROM OTHER USERS
   useEffect(() => {
     socket.on("serverMsg", (data) => {
-      console.log(data);
       setChatMessage([...chatMessage, data]);
     });
   }, [socket, chatMessage]);
+
 
   // EMMITS THE SOCKET EVENT TO THE SERVER
   const handleSend = () => {
@@ -179,7 +148,7 @@ const Home = () => {
                     onClick={(e: any) => setThread(e.target.innerText)}
                     style={{ cursor: "pointer" }}
                   >
-                    {item}
+                    {item.course_number}
                   </List.Item>
                 )}
               />
@@ -201,11 +170,13 @@ const Home = () => {
             >
               <div>
                 {chatMessage.map((msg, idx) => {
+                  console.log(msg.sender_id)
+                  console.log(userJSON.id)
                   return (
                     <ChatComponent
                       key={idx}
                       text={msg.msg}
-                      className={ "sender"}
+                      className={msg.sender_id === userJSON.id? "sender": "receiver"}
                     />
                   );
                 })}

@@ -1,13 +1,15 @@
 import React from "react";
 import "./ChatComponent.scss"
+
+
 interface ChatTypes {
   text: string;
-  key: number
+  id: number
   className: string
 }
 
-const ChatComponent: React.FC<ChatTypes> = ({ text, key, className }) => {
-  return <div key={key} className={className}>{text}</div>;
+const ChatComponent: React.FC<ChatTypes> = ({ text,className, key }) => {
+  return <div className={className} key={key}>{text}</div>;
 };
 
 export default ChatComponent;
