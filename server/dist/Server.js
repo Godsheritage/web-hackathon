@@ -19,16 +19,20 @@ const io = new socket_io_1.Server(server, {
     auth: false,
 });
 const PORT = process.env.PORT || 1234;
-// SET THE SOCKET SERVER TO LISTEN TO EVENTS 
+// SET THE SOCKET SERVER TO LISTEN TO EVENTS
 io.on("connection", (socket) => {
+    console.log(`websocket server is connected`);
     socket.on("clientMsg", (data) => {
-        if ((data.room = "")) {
-            socket.broadcast.emit("serverMsg", data);
-        }
-        else {
-            socket.join(data.room);
-            io.to(data.room).emit("serverMsg", data);
-        }
+        io.emit("serverMsg", data);
+        // if ((data.room = "")) {
+        //   socket.broadcast.emit("serverMsg", data);
+        // } else {
+        //   socket.join(data.room);
+        //   io.to(data.room).emit("serverMsg", data);
+        // }
+    });
+    socket.on("disconnect", (reason) => {
+        console.log(`Websocket discsonnected due to ${reason}`);
     });
 });
 server.listen(PORT, () => {

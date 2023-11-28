@@ -5,9 +5,8 @@ import ModalComponent from "../../components/ModalComponent";
 import InfiniteScroll from "react-infinite-scroll-component";
 import HeaderComponent from "../../components/HeaderComponent";
 import FooterComponent from "../../components/FooterComponent";
-import ChatComponent from "../../components/chat/ChatComponent"
+import ChatComponent from "../../components/chat/ChatComponent";
 import { ServerToClientEvents, ClientToServerEvents } from "../../../../typing";
-
 
 import {
   SearchOutlined,
@@ -89,19 +88,25 @@ const Home = () => {
   const [current, setCurrent] = useState("majors");
   const [showModal, setShowModal] = useState(false);
   const [thread, setThread] = useState("Select Thread");
-  const [chatMessage, setChatMessage] = useState<string[]>([]);
+  const [chatMessage, setChatMessage] = useState([]);
+  const [user, setUser] = useState();
+
+  // // Retrieve the JSON string from local storage using the key 'user'
+  const userJSON = JSON.parse(localStorage.getItem("user"))
+
+
 
   // CONSTANTLY QUERY THE BACKEND SERVER FOR NEW MESSAGES FROM OTHER USERS
   useEffect(() => {
     socket.on("serverMsg", (data) => {
-      console.log(data)
-      setChatMessage([...chatMessage, data.msg]);
+      console.log(data);
+      setChatMessage([...chatMessage, data]);
     });
   }, [socket, chatMessage]);
 
   // EMMITS THE SOCKET EVENT TO THE SERVER
   const handleSend = () => {
-    socket.emit("clientMsg", { msg: message });
+    socket.emit("clientMsg", { msg: message, room: thread, sender_id: userJSON.id });
     setMessage("");
   };
 
@@ -120,7 +125,7 @@ const Home = () => {
     setCurrent(e.key);
   };
 
-  // CHECKS IF MY TEXT INPUT HAS @ai 
+  // CHECKS IF MY TEXT INPUT HAS @ai
   const handleChange = (e) => {
     const inputValue = e.target.value;
     setMessage(inputValue);
@@ -196,7 +201,13 @@ const Home = () => {
             >
               <div>
                 {chatMessage.map((msg, idx) => {
-                  return <ChatComponent key={idx} text={msg} />;
+                  return (
+                    <ChatComponent
+                      key={idx}
+                      text={msg.msg}
+                      className={ "sender"}
+                    />
+                  );
                 })}
               </div>
               <Input

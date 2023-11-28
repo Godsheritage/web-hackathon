@@ -1,13 +1,15 @@
 .sender {
   width: 10rem;
-  color: black;
+  color: white;
+  text-align: center;
   background-color: #4f6ebd;
   padding: 12px 12px 12px 12px;
   border-radius: 50px;
   font-size: 10pt;
   font-family: "Montserrat", sans-serif;
   margin-right: 0px !important;
-  margin-left: auto; /* flexbox alignment rule */
+  margin: 0px 0px 0.3rem auto !important;
+  
 }
 
 .receiver {
@@ -19,5 +21,5 @@
   border-radius: 50px;
   font-size: 10pt;
   font-family: "Montserrat", sans-serif;
-  margin: 0px auto 0.5rem 10px !important;
+  margin: 0px auto 0.3rem 10px !important;
 }
