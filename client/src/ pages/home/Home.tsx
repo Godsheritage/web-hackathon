@@ -1,11 +1,11 @@
 import "./home.scss";
 import { Socket, io } from "socket.io-client";
 import React, { useState, useEffect } from "react";
-import ChatComponent from "../../components/ChatComponent";
 import ModalComponent from "../../components/ModalComponent";
 import InfiniteScroll from "react-infinite-scroll-component";
 import HeaderComponent from "../../components/HeaderComponent";
 import FooterComponent from "../../components/FooterComponent";
+import ChatComponent from "../../components/chat/ChatComponent"
 import { ServerToClientEvents, ClientToServerEvents } from "../../../../typing";
 
 
