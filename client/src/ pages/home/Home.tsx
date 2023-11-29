@@ -31,7 +31,6 @@ import {
 
 const { Sider, Content } = Layout;
 
-
 // MENU ITEMS
 const items: MenuProps["items"] = [
   {
@@ -48,23 +47,21 @@ const items: MenuProps["items"] = [
 
 const Home = () => {
   // SETUP THE WEB SOCKET CONNECTION TO THE BACKEND SERVER
+
   const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
     "http://localhost:1234/"
   );
 
   const [message, setMessage] = useState("");
   const [currentMenuItem, setCurrentMenuItem] = useState("majors");
-  const [data, setData] = useState<any>(courseData);
+  const [data, setData] = useState<any>(majorsData);
   const [showModal, setShowModal] = useState(false);
   const [thread, setThread] = useState("Select Thread");
   const [chatMessage, setChatMessage] = useState([]);
   const [user, setUser] = useState();
 
-
   // // Retrieve the JSON string from local storage using the key 'user'
-  const userJSON = JSON.parse(localStorage.getItem("user"))
-
-
+  const userJSON = JSON.parse(localStorage.getItem("user"));
 
   // CONSTANTLY QUERY THE BACKEND SERVER FOR NEW MESSAGES FROM OTHER USERS
   useEffect(() => {
@@ -73,31 +70,32 @@ const Home = () => {
     });
   }, [socket, chatMessage]);
 
-
   // EMMITS THE SOCKET EVENT TO THE SERVER
   const handleSend = () => {
-    socket.emit("clientMsg", { msg: message, room: thread, sender_id: userJSON.id });
-    setMessage("");
+    if (message) {
+      socket.emit("clientMsg", {
+        msg: message,
+        room: thread,
+        sender_id: userJSON.id,
+      });
+      setMessage("");
+    }
   };
 
   // HANDLES THE "MAJORS, AND COURSES SEARCH FEATURRE
   const handleSearch = (e) => {
     const searchParam = e.target.value.toLowerCase();
     if (currentMenuItem == "majors") {
-
       const filteredData = data.filter((item) =>
         item.major.toLowerCase().includes(searchParam)
       );
       setData(searchParam ? filteredData : majorsData);
-    }
-    else if (currentMenuItem == "courses") {
+    } else if (currentMenuItem == "courses") {
       const filteredData = data.filter((item) =>
         item.course_number.toLowerCase().includes(searchParam)
       );
       setData(searchParam ? filteredData : courseData);
-
     }
-
   };
 
   // HANDLES THE SUB MENU CLICK FEAUTURE
@@ -107,12 +105,10 @@ const Home = () => {
 
     // CHANGES THE DATA STATE BASED ON MAJORS, OR COURSE FILTER
     if (e.key == "courses") {
-      setData(courseData)
+      setData(courseData);
+    } else if (e.key == "majors") {
+      setData(majorsData);
     }
-    else if (e.key == "majors") {
-      setData(majorsData)
-    }
-
   };
 
   // DISPLAYS THE AI MODAL WHWEN @ai IS DETECTED
@@ -132,7 +128,7 @@ const Home = () => {
     <Space direction="vertical" style={{ width: "100%" }} size={[0, 48]}>
       <Layout>
         <HeaderComponent />
-        <Layout hasSider className="main-content">
+        <Layout hasSider className="main-content" style={{ height: "88vh" }}>
           {/* //! Start SideBar Component   */}
           <Sider className="sider" width={"25vw"}>
             <Menu
@@ -170,7 +166,9 @@ const Home = () => {
                     style={{ cursor: "pointer" }}
                   >
                     {/* CONDITIONAL STATEMENT TO FILTER LIST BY MAJOR OR COURSES */}
-                    {currentMenuItem === "majors" ? item.major : `${item.course_number} (${item.course_name})`}
+                    {currentMenuItem === "majors"
+                      ? item.major
+                      : `${item.course_number} (${item.course_name})`}
                   </List.Item>
                 )}
               />
@@ -190,15 +188,17 @@ const Home = () => {
                 height: "100%",
               }}
             >
-              <div>
+              <div className="message-frame">
                 {chatMessage.map((msg, idx) => {
-                  console.log(msg.sender_id)
-                  console.log(userJSON.id)
+                  console.log(msg.sender_id);
+                  console.log(userJSON.id);
                   return (
                     <ChatComponent
                       key={idx}
                       text={msg.msg}
-                      className={msg.sender_id === userJSON.id ? "sender" : "receiver"}
+                      className={
+                        msg.sender_id === userJSON.id ? "sender" : "receiver"
+                      }
                     />
                   );
                 })}

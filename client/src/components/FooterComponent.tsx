@@ -5,7 +5,7 @@ const {Footer} = Layout
 
 const FooterComponent = () => {
   return (
-    <Footer className="footer">Copywright Godsheritage &#169; 2023</Footer>
+    <Footer className="footer" style={{height:"5vh"}}>Copywright Godsheritage &#169; 2023</Footer>
   );
 };
 

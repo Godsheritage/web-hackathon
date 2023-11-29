@@ -11,7 +11,7 @@ const { Header } = Layout;
 
 const HeaderComponent = () => {
   return (
-    <Header className="header">
+    <Header className="header" style={{height:"5vh"}}>
       {/* //TODO get a better logo*/}
       <h1>Logo</h1>
       <h1>{"thread"}</h1>
