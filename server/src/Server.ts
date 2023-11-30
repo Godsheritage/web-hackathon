@@ -58,7 +58,7 @@ io.on(
 
 // THIS METHOD STARTS THE SERVER AND CONNECTS TO THE DB
 const startServer = async () => {
-  await mongoose.connect(MOGO_URL);
+  // await mongoose.connect(MOGO_URL);
   server.listen(PORT, () => {
     console.log(`server is listening on PORT ${PORT}...`);
   });

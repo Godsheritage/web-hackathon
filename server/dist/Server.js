@@ -54,7 +54,7 @@ io.on("connection", (socket) => {
 });
 // THIS METHOD STARTS THE SERVER AND CONNECTS TO THE DB
 const startServer = () => __awaiter(void 0, void 0, void 0, function* () {
-    yield mongoose_1.default.connect(MOGO_URL);
+    // await mongoose.connect(MOGO_URL);
     server.listen(PORT, () => {
         console.log(`server is listening on PORT ${PORT}...`);
     });
