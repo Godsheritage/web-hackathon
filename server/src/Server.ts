@@ -2,8 +2,12 @@ import app from "./App";
 import http from "http";
 import cors from "cors";
 import { Server, Socket } from "socket.io";
-import { ClientToServerEvents, ServerToClientEvents } from "../../typing";
 import { instrument } from "@socket.io/admin-ui";
+import mongoose from "mongoose";
+import { ClientToServerEvents, ServerToClientEvents } from "../../typing";
+
+const MOGO_URL =
+  "mongodb+srv://Heritage:Heritage4lyf@msuchat.wqkqbrm.mongodb.net/?retryWrites=true&w=majority";
 
 const server = http.createServer(app);
 
@@ -19,15 +23,25 @@ instrument(io, {
   auth: false,
 });
 
+
+mongoose.connection.once("open", () => {
+  console.log("Mongodb connection is ready");
+});
+
+mongoose.connection.on("error", (err) => {
+  console.log(err);
+});
+
 const PORT = process.env.PORT || 1234;
+
 
 // SET THE SOCKET SERVER TO LISTEN TO EVENTS
 io.on(
   "connection",
   (socket: Socket<ClientToServerEvents, ServerToClientEvents>) => {
-    console.log(`websocket server is connected`)
+    console.log(`websocket server is connected`);
     socket.on("clientMsg", (data) => {
-      io.emit("serverMsg", data)
+      io.emit("serverMsg", data);
       // if ((data.room = "")) {
       //   socket.broadcast.emit("serverMsg", data);
       // } else {
@@ -41,6 +55,13 @@ io.on(
   }
 );
 
-server.listen(PORT, () => {
-  console.log(`server is listening on PORT ${PORT}...`);
-});
+
+// THIS METHOD STARTS THE SERVER AND CONNECTS TO THE DB
+const startServer = async () => {
+  await mongoose.connect(MOGO_URL);
+  server.listen(PORT, () => {
+    console.log(`server is listening on PORT ${PORT}...`);
+  });
+};
+
+startServer();
