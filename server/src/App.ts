@@ -1,5 +1,7 @@
-import express, { RequestHandler } from "express";
 import cors from "cors";
+import express, { RequestHandler } from "express";
+import coursesRoute from "./routes/courses route /courses.routes";
+import majorsRoute from "./routes/majors route/majors.routes";
 
 const app = express();
 
@@ -12,8 +14,13 @@ const homeRouter: RequestHandler = (req, res) => {
   });
 };
 
-app.use("/", homeRouter);
+// app.use("/", homeRouter);
 
+//ROUTES
+app.use("/courses", coursesRoute);
+app.use("/majors", majorsRoute);
+// app.use("/cartitems", cartRoute);
+// app.use("/Contact", contactRoute);
+// app.use("/products", productRoute);
 
 export default app;
-

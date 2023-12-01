@@ -1,6 +1,5 @@
 import app from "./App";
 import http from "http";
-import cors from "cors";
 import { Server, Socket } from "socket.io";
 import { instrument } from "@socket.io/admin-ui";
 import mongoose from "mongoose";
@@ -58,7 +57,7 @@ io.on(
 
 // THIS METHOD STARTS THE SERVER AND CONNECTS TO THE DB
 const startServer = async () => {
-  // await mongoose.connect(MOGO_URL);
+  await mongoose.connect(MOGO_URL);
   server.listen(PORT, () => {
     console.log(`server is listening on PORT ${PORT}...`);
   });
