@@ -215,6 +215,7 @@ const Home = () => {
                 addonAfter={<SendOutlined onClick={() => handleSend()} />}
                 placeholder="Send a message here"
                 onChange={(e) => handleChange(e)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSend()}
                 value={message}
               />
               {showModal && <ModalComponent />}
