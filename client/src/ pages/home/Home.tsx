@@ -1,5 +1,8 @@
 import "./home.scss";
+import axios from "axios";
 import { Socket, io } from "socket.io-client";
+import { majorsData } from "../../data/majors";
+import { courseData } from "../../data/courses";
 import React, { useState, useEffect } from "react";
 import ModalComponent from "../../components/ModalComponent";
 import InfiniteScroll from "react-infinite-scroll-component";
@@ -7,8 +10,6 @@ import HeaderComponent from "../../components/HeaderComponent";
 import FooterComponent from "../../components/FooterComponent";
 import ChatComponent from "../../components/chat/ChatComponent";
 import { ServerToClientEvents, ClientToServerEvents } from "../../../../typing";
-import { courseData } from "../../data/courses";
-import { majorsData } from "../../data/majors";
 import {
   SearchOutlined,
   BookOutlined,
@@ -63,6 +64,13 @@ const Home = () => {
   // // Retrieve the JSON string from local storage using the key 'user'
   const userJSON = JSON.parse(localStorage.getItem("user"));
 
+  useEffect(() => {
+    const fetchData = async () => {
+      await axios.get("http://localhost:1234/courses/get");
+    };
+    fetchData
+  }, []);
+
   // CONSTANTLY QUERY THE BACKEND SERVER FOR NEW MESSAGES FROM OTHER USERS
   useEffect(() => {
     socket.on("serverMsg", (data) => {
@@ -98,7 +106,7 @@ const Home = () => {
     }
   };
 
-  // HANDLES THE SUB MENU CLICK FEAUTURE
+  // HANDLES THE SUB MENU CLICK FEAUTUREw   4  21
   const onClick: MenuProps["onClick"] = (e) => {
     console.log("click ", e);
     setCurrentMenuItem(e.key);
@@ -115,7 +123,6 @@ const Home = () => {
   const handleChange = (e) => {
     const inputValue = e.target.value;
     setMessage(inputValue);
-
     if (inputValue.includes("@ai ")) {
       setShowModal(false);
     } else if (inputValue.includes("@ai")) {
@@ -124,6 +131,7 @@ const Home = () => {
       setShowModal(false);
     }
   };
+
   return (
     <Space direction="vertical" style={{ width: "100%" }} size={[0, 48]}>
       <Layout>
