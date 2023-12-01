@@ -1,8 +1,12 @@
 import "./home.scss";
 import axios from "axios";
 import { Socket, io } from "socket.io-client";
-import { majorsData } from "../../data/majors";
+// import { majorsData } from "../../data/majors";
 // import { courseData } from "../../data/courses";
+import { useContext } from "react";
+import AppContext from "../../context/AppContext";
+
+import { contextTypes } from "../../types";
 import React, { useState, useEffect } from "react";
 import ModalComponent from "../../components/ModalComponent";
 import InfiniteScroll from "react-infinite-scroll-component";
@@ -46,14 +50,13 @@ const items: MenuProps["items"] = [
   },
 ];
 
-
 const Home = () => {
   // SETUP THE WEB SOCKET CONNECTION TO THE BACKEND SERVER
   const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
     "http://localhost:1234/"
   );
-  let courseData =[]
 
+  const { courseData, majorsData } = useContext(AppContext) as contextTypes;
 
   const [message, setMessage] = useState("");
   const [currentMenuItem, setCurrentMenuItem] = useState("majors");
@@ -63,17 +66,10 @@ const Home = () => {
   const [chatMessage, setChatMessage] = useState([]);
   const [user, setUser] = useState();
 
+  //IMPORTS THE APP WIDE STATES FROM THE APP CONTEXT
+
   // Retrieve the JSON string from local storage using the key 'user'
   const userJSON = JSON.parse(localStorage.getItem("user"));
-
-  //FETCH COURSES AND MAJORS DATA FROM THE BACKEND
-  useEffect(() => {
-    const fetchData = async () => {
-      courseData = await axios.get("http://localhost:1234/courses/get");
-    };
-    fetchData()
-    console.log(courseData)
-  }, []);
 
   // CONSTANTLY QUERY THE BACKEND SERVER FOR NEW MESSAGES FROM OTHER USERS
   useEffect(() => {
@@ -166,7 +162,8 @@ const Home = () => {
             <InfiniteScroll
               dataLength={data.length}
               hasMore={data.length < 50}
-              //   loader={<Skeleton avatar paragraph={{ rows: 1 }} active />}
+              loader={<Skeleton avatar paragraph={{ rows: 1 }} active />}
+              // next={}
               height={"73vh"}
             >
               <List
@@ -219,7 +216,7 @@ const Home = () => {
                 addonAfter={<SendOutlined onClick={() => handleSend()} />}
                 placeholder="Send a message here"
                 onChange={(e) => handleChange(e)}
-                onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+                onKeyDown={(e) => e.key === "Enter" && handleSend()}
                 value={message}
               />
               {showModal && <ModalComponent />}
