@@ -2,7 +2,7 @@ import "./home.scss";
 import axios from "axios";
 import { Socket, io } from "socket.io-client";
 import { majorsData } from "../../data/majors";
-import { courseData } from "../../data/courses";
+// import { courseData } from "../../data/courses";
 import React, { useState, useEffect } from "react";
 import ModalComponent from "../../components/ModalComponent";
 import InfiniteScroll from "react-infinite-scroll-component";
@@ -46,12 +46,14 @@ const items: MenuProps["items"] = [
   },
 ];
 
+
 const Home = () => {
   // SETUP THE WEB SOCKET CONNECTION TO THE BACKEND SERVER
-
   const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
     "http://localhost:1234/"
   );
+  let courseData =[]
+
 
   const [message, setMessage] = useState("");
   const [currentMenuItem, setCurrentMenuItem] = useState("majors");
@@ -61,14 +63,16 @@ const Home = () => {
   const [chatMessage, setChatMessage] = useState([]);
   const [user, setUser] = useState();
 
-  // // Retrieve the JSON string from local storage using the key 'user'
+  // Retrieve the JSON string from local storage using the key 'user'
   const userJSON = JSON.parse(localStorage.getItem("user"));
 
+  //FETCH COURSES AND MAJORS DATA FROM THE BACKEND
   useEffect(() => {
     const fetchData = async () => {
-      await axios.get("http://localhost:1234/courses/get");
+      courseData = await axios.get("http://localhost:1234/courses/get");
     };
-    fetchData
+    fetchData()
+    console.log(courseData)
   }, []);
 
   // CONSTANTLY QUERY THE BACKEND SERVER FOR NEW MESSAGES FROM OTHER USERS
