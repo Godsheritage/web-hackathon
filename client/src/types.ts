@@ -4,4 +4,13 @@ export interface contextTypes{
     loading:boolean
     thread:string
     setThread:any
+    sendMessage:any
+    chatMessages:any
+    fetchMessages:any
 } 
+export interface messageType {
+    msg: string;
+    room: string;
+    senderId: string;
+}
+  

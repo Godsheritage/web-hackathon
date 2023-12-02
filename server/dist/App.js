@@ -10,6 +10,7 @@ const courses_routes_1 = __importDefault(require("./routes/courses route /course
 const messages_routes_1 = __importDefault(require("./routes/messages routes/messages.routes"));
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)());
+app.use(express_1.default.json());
 // SERVER ROUTES
 app.use("/courses", courses_routes_1.default);
 app.use("/majors", majors_routes_1.default);

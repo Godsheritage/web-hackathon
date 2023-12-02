@@ -1,12 +1,12 @@
 import express from "express"
 import { httpFetchMessages } from "./messages.controler"
-import { httpSaveCourses } from "../courses route /courses.controller"
+import { httpSaveMessages } from "./messages.controler"
 
 const messagesRoute = express.Router()
 
 messagesRoute.get("/get", httpFetchMessages)
 
-//ROUTES TO SAVE MESSAGES
-messagesRoute.post("/save", httpSaveCourses)
+
+messagesRoute.post("/save", httpSaveMessages)
 
 export default messagesRoute

@@ -2,7 +2,7 @@ import React, {useContext} from "react";
 import { SearchOutlined } from "@ant-design/icons";
 import { Layout, Input, Space, Button } from "antd";
 import AppContext from "../context/AppContext";
-import { contextTypes } from "../types";
+import { contextTypes } from "../Types";
 
 const { Header } = Layout;
 

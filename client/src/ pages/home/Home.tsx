@@ -6,8 +6,9 @@ import { Socket, io } from "socket.io-client";
 import { useContext } from "react";
 import AppContext from "../../context/AppContext";
 
-import { contextTypes } from "../../types";
+import { contextTypes, messageType } from "../../Types";
 import React, { useState, useEffect } from "react";
+import fetdchMessages from "../../context/AppContext"
 import ModalComponent from "../../components/ModalComponent";
 import InfiniteScroll from "react-infinite-scroll-component";
 import HeaderComponent from "../../components/HeaderComponent";
@@ -56,22 +57,28 @@ const Home = () => {
     "http://localhost:1234/"
   );
 
-  const { courseData, majorsData, loading, thread, setThread } = useContext(
-    AppContext
-  ) as contextTypes;
+  const {
+    courseData,
+    majorsData,
+    loading,
+    thread,
+    setThread,
+    sendMessage,
+    chatMessages,
+  } = useContext(AppContext) as contextTypes;
 
   const [message, setMessage] = useState("");
   const [currentMenuItem, setCurrentMenuItem] = useState("majors");
   const [data, setData] = useState<any>([]);
   const [showModal, setShowModal] = useState(false);
-  const [chatMessage, setChatMessage] = useState([]);
+  const [chatMessage, setChatMessage] = useState<messageType[]>([]);
   const [user, setUser] = useState();
 
   useEffect(() => {
     setData(majorsData);
   }, [majorsData]);
 
-  // Retrieve the JSON string from local storage using the key 'user'
+  //RETRIEVE THE USER INFORMATION FROM LOCAL STORAGE
   const userJSON = JSON.parse(localStorage.getItem("user"));
 
   // CONSTANTLY QUERY THE BACKEND SERVER FOR NEW MESSAGES FROM OTHER USERS
@@ -82,10 +89,12 @@ const Home = () => {
   }, [socket, chatMessage]);
 
   // SENDS THE MESSAGE TO THE SERVER
-  const handleSend = () => {
+  const handleSend = async () => {
     if (message) {
-      const messageObj = { msg: message, room: thread, sender_id: userJSON.id };
+      const messageObj = { msg: message, room: thread, senderId: userJSON.id };
       socket.emit("clientMsg", messageObj);
+      const chatMessages = await sendMessage(messageObj);
+      console.log(chatMessages);
       setMessage("");
     }
   };
@@ -198,14 +207,14 @@ const Home = () => {
             >
               <div className="message-frame">
                 {chatMessage.map((msg, idx) => {
-                  console.log(msg.sender_id);
-                  console.log(userJSON.id);
+                  // console.log(msg.senderid);
+                  // console.log(userJSON.id);
                   return (
                     <ChatComponent
                       key={idx}
                       text={msg.msg}
                       className={
-                        msg.sender_id === userJSON.id ? "sender" : "receiver"
+                        msg.senderId === userJSON.id ? "sender" : "receiver"
                       }
                     />
                   );

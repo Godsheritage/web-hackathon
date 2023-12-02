@@ -8,6 +8,7 @@ const app = express();
 
 app.use(cors());
 
+app.use(express.json())
 
 // SERVER ROUTES
 app.use("/courses", coursesRoute);

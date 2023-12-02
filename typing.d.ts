@@ -1,6 +1,6 @@
 export interface ServerToClientEvents {
-  serverMsg: (data: { msg: string; room: string; sender_id:string }) => void;
+  serverMsg: (data: { msg: string; room: string; senderId:string }) => void;
 }
 export interface ClientToServerEvents {
-  clientMsg: (data: { msg: string; room:string; sender_id:string  }) => void;
+  clientMsg: (data: { msg: string; room:string; senderId:string  }) => void;
 }
