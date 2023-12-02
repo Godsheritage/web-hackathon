@@ -56,17 +56,20 @@ const Home = () => {
     "http://localhost:1234/"
   );
 
-  const { courseData, majorsData } = useContext(AppContext) as contextTypes;
+  const { courseData, majorsData, loading, thread, setThread } = useContext(
+    AppContext
+  ) as contextTypes;
 
   const [message, setMessage] = useState("");
   const [currentMenuItem, setCurrentMenuItem] = useState("majors");
-  const [data, setData] = useState<any>(majorsData);
+  const [data, setData] = useState<any>([]);
   const [showModal, setShowModal] = useState(false);
-  const [thread, setThread] = useState("Select Thread");
   const [chatMessage, setChatMessage] = useState([]);
   const [user, setUser] = useState();
 
-  //IMPORTS THE APP WIDE STATES FROM THE APP CONTEXT
+  useEffect(() => {
+    setData(majorsData);
+  }, [majorsData]);
 
   // Retrieve the JSON string from local storage using the key 'user'
   const userJSON = JSON.parse(localStorage.getItem("user"));
@@ -78,14 +81,11 @@ const Home = () => {
     });
   }, [socket, chatMessage]);
 
-  // EMMITS THE SOCKET EVENT TO THE SERVER
+  // SENDS THE MESSAGE TO THE SERVER
   const handleSend = () => {
     if (message) {
-      socket.emit("clientMsg", {
-        msg: message,
-        room: thread,
-        sender_id: userJSON.id,
-      });
+      const messageObj = { msg: message, room: thread, sender_id: userJSON.id };
+      socket.emit("clientMsg", messageObj);
       setMessage("");
     }
   };
@@ -145,7 +145,6 @@ const Home = () => {
               mode="horizontal"
               items={items}
             />
-
             <Space.Compact
               size="large"
               style={{ backgroundColor: "white", width: "25vw" }}
@@ -158,30 +157,30 @@ const Home = () => {
             </Space.Compact>
             <br />
             <br />
-
-            <InfiniteScroll
-              dataLength={data.length}
-              hasMore={data.length < 50}
-              loader={<Skeleton avatar paragraph={{ rows: 1 }} active />}
-              // next={}
-              height={"73vh"}
-            >
-              <List
-                bordered
-                dataSource={data}
-                renderItem={(item) => (
-                  <List.Item
-                    onClick={(e: any) => setThread(e.target.innerText)}
-                    style={{ cursor: "pointer" }}
-                  >
-                    {/* CONDITIONAL STATEMENT TO FILTER LIST BY MAJOR OR COURSES */}
-                    {currentMenuItem === "majors"
-                      ? item.major
-                      : `${item.course_number} (${item.course_name})`}
-                  </List.Item>
-                )}
-              />
-            </InfiniteScroll>
+            <Skeleton loading={loading} active paragraph={{ rows: 13 }}>
+              <InfiniteScroll
+                dataLength={data.length}
+                hasMore={data.length < 50}
+                // next={}
+                height={"73vh"}
+              >
+                <List
+                  bordered
+                  dataSource={data}
+                  renderItem={(item) => (
+                    <List.Item
+                      onClick={(e: any) => setThread(e.target.innerText)}
+                      style={{ cursor: "pointer" }}
+                    >
+                      {/* CONDITIONAL STATEMENT TO FILTER LIST BY MAJOR OR COURSES */}
+                      {currentMenuItem === "majors"
+                        ? item.major
+                        : `${item.course_number} (${item.course_name})`}
+                    </List.Item>
+                  )}
+                />
+              </InfiniteScroll>
+            </Skeleton>
           </Sider>
           {/* //! End SideBar Component   */}
           {/* //! Start Main Content Component   */}
