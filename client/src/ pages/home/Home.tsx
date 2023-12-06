@@ -1,6 +1,7 @@
 import "./home.scss";
 import { Socket, io } from "socket.io-client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext} from "react";
+import { useNavigate } from "react-router-dom";
 import ModalComponent from "../../components/ModalComponent";
 import InfiniteScroll from "react-infinite-scroll-component";
 import HeaderComponent from "../../components/HeaderComponent";
@@ -9,6 +10,8 @@ import ChatComponent from "../../components/chat/ChatComponent";
 import { ServerToClientEvents, ClientToServerEvents } from "../../../../typing";
 import { courseData } from "../../data/courses";
 import { majorsData } from "../../data/majors";
+import { UserContext } from "../../content/userContext";
+import { logoutUser } from "../../../magic";
 import {
   SearchOutlined,
   BookOutlined,
@@ -51,6 +54,7 @@ const Home = () => {
   const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
     "http://localhost:1234/"
   );
+  
 
   const [message, setMessage] = useState("");
   const [currentMenuItem, setCurrentMenuItem] = useState("majors");
@@ -69,6 +73,8 @@ const Home = () => {
       setChatMessage([...chatMessage, data]);
     });
   }, [socket, chatMessage]);
+
+
 
   // EMMITS THE SOCKET EVENT TO THE SERVER
   const handleSend = () => {
@@ -126,7 +132,8 @@ const Home = () => {
   };
   return (
     <Space direction="vertical" style={{ width: "100%" }} size={[0, 48]}>
-      <Layout>
+      <Layout> 
+        
         <HeaderComponent />
         <Layout hasSider className="main-content" style={{ height: "88vh" }}>
           {/* //! Start SideBar Component   */}
