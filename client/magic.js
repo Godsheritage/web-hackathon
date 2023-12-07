@@ -9,7 +9,8 @@ export const checkUser = async (callback) => {
  
         if (isLoggedIn) {
           const user = await magic.user.getInfo();
-          return callback({ isLoggedIn: true, email: user.email });
+         
+          return callback({ isLoggedIn: true, email: user.email});
         }
         return callback({ isLoggedIn: false });
     }catch (err){

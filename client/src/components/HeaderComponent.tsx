@@ -1,6 +1,7 @@
 import React from "react";
 import { useContext } from "react";
-import { useNavigate, redirect} from "react-router-dom";
+import { useState, useEffect} from "react";
+import { useNavigate, redirect,  useLocation   } from "react-router-dom";
 import { SearchOutlined } from "@ant-design/icons";
 import { Layout, Input, Space, Button } from "antd";
 import { UserContext } from "../content/userContext";
@@ -16,15 +17,30 @@ const HeaderComponent = () => {
 
 
     //For Magic Link Authentication 
+    const [setEmailcond, emailcond] = useState(" ")
     const {email} = useContext(UserContext)
+    const [userMail, setUserMail] = useState("")
     const navigate = useNavigate();
+    const location = useLocation();
     /////-----
+
+    if (location.state != null && location.state.key  ) {
+     
+      useEffect( () => {
+        const validateUser = async () => {
+          console.log(location.state.useremail)
+          setUserMail(location.state.useremail)
+        }
+        validateUser();
+      },[]) 
+  
+    }
    
     const handleLogOut = async () => {
       try{
         await logoutUser();
         console.log('testing')
-        return redirect("/signup")
+        return navigate("/signup",{ state: {  key: true } } );
       }catch (error){
         console.error(error)
       }
@@ -54,7 +70,7 @@ const HeaderComponent = () => {
 
 
       </div>
-      <h1>User: { email }</h1>
+      <h1>User: { userMail }</h1>
       <Button size={"large"} shape="round" style={{ marginLeft: "1rem" }} onClick = {handleLogOut}>
           Logout
         </Button>

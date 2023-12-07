@@ -1,7 +1,9 @@
-import React, { useState} from 'react';
+import React, { useState, useEffect} from 'react';
 import { useNavigate } from 'react-router-dom'
 import { Button, Form, Input, Radio } from 'antd';
 import { loginUser } from '../../../magic';
+import { useLocation } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid'
 type LayoutType = Parameters<typeof Form>[0]['layout'];
 
 const SignUp: React.FC = () => {
@@ -9,8 +11,17 @@ const SignUp: React.FC = () => {
   const [formLayout, setFormLayout] = useState<LayoutType>('horizontal');
   const [email, setEmail ] = useState("")
   const [error, setError] = useState("")
+  const [userID, setUserID] = useState(" ")
   const navigate = useNavigate();
 
+  let location = useLocation()
+  console.log(location)
+  if (location.state != null && location.state.key  ) {
+    useEffect( () => {
+        setEmail(" ")
+    },[location]) 
+
+  }
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (!email) {
@@ -18,8 +29,10 @@ const SignUp: React.FC = () => {
       return;
     }
     try {
+      let id = uuidv4() 
+      setUserID(id)
       await loginUser(email);
-      navigate('/');
+      navigate('/',{ state: {  key: true , useremail: email} } );
     } catch (error) {
       setError('Unable to log in');
       console.error(error);
@@ -38,6 +51,8 @@ const SignUp: React.FC = () => {
 
   const buttonItemLayout =
     formLayout === 'horizontal' ? { wrapperCol: { span: 14, offset: 4 } } : null;
+
+  
 
   return (
     <Form

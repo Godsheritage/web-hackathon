@@ -11,7 +11,7 @@ import LogOn from "./ pages/LogOn";
 import SignUp from "./ pages/Authenticate/SignUp";
 
 const App = () => {
-  const [user, setUser] = useState({ isLoggedIn: null, email: '' });
+  const [user, setUser] = useState({ isLoggedIn: null, email: '', userID: "" });
 
   useEffect(() => {
     const validateUser = async () => {
